@@ -9,7 +9,7 @@ The Pad in a Box static website is intended to be hosted at **https://pad.notjac
 3. Drag the *contents* of the extracted folder (including `index.html`, all JS/CSS files, `cello.wasm`, `violin.wasm`, `presets/`, `strings-lab/`, and `licenses/`) into the uploader. Do not upload the ZIP as one file or put the app in a nested folder.
 4. Commit the upload to `main`. Preserve the existing `CNAME` file (`pad.notjack.au`).
 5. In **Settings → Pages**, select **Deploy from a branch**, `main`, `/ (root)`, and **Save**.
-6. First verify the app at `https://dannotjack.github.io/pad-in-a-box/`.
+6. Wait for the GitHub Pages deployment to finish successfully in the repository's **Actions** tab. Because the custom domain is already configured, the default github.io link may redirect before your DNS is changed.
 7. When ready to cut over, at Chirpy change the `pad` CNAME from `custom-domains.chatgpt.site` to `dannotjack.github.io`. Do not change the apex `notjack.au` or unrelated subdomains.
 8. After DNS propagation, verify `https://pad.notjack.au`, the audio engine and the mixer. Enable **Enforce HTTPS** in Pages once available.
 
