@@ -1,0 +1,10 @@
+/* Everyday mixing first; detailed sound design stays within each channel. */
+.device{width:min(1100px,100%)}
+.channel{display:block;padding:18px}.channelhead h2{margin:0;font-size:17px}.channelhead button{min-height:44px;padding:8px 12px}
+.channel-main,.eq-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px}
+.parameter.range .sliderlabel{flex-direction:row;text-align:left;align-items:baseline;margin-top:8px}.parameter.range .dialface{display:none}
+.channel-detail{border-top:1px solid #dedfd7;margin-top:16px;padding-top:12px}summary{min-height:44px;align-content:center}.eq-controls{padding-top:8px}
+.transport{position:sticky;top:0;z-index:10;background:#eeece5f5;padding:12px 0;border-bottom:1px solid #d2d4ce}.transport .play{flex:1;max-width:260px}.transport select,select{max-width:100%;min-height:44px}
+.mixpanel>summary{font-size:16px}.mixpanel p{line-height:1.6;max-width:78ch}.mixpanel[open]>summary{margin-bottom:12px}.top{flex-wrap:wrap}.keyboard{height:90px}.keyboard .note{height:90px}.keyboard .note.black{height:56px}
+.mixcards{align-items:start}.drawbars{overflow-x:auto}.drawbar{min-width:30px}.recipe .actions button{min-height:44px}
+@media(max-width:600px){.channel-main,.eq-controls{grid-template-columns:1fr}.transport{gap:8px}.transport .play{max-width:none}.channelhead{flex-wrap:nowrap}.channelhead h2{font-size:16px}.drawbars{gap:3px;padding:12px 4px}.drawbar .sliderlabel{font-size:9px}.meta{display:none}}

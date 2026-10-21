@@ -52,7 +52,7 @@ class Sound{
    bass.type='lowshelf';bass.frequency.value=180;mid.type='peaking';mid.frequency.value=210;mid.Q.value=.8;treble.type='highshelf';treble.frequency.value=2200;lp.type='lowpass';lp.Q.value=.5;
    dry.gain.value=k==='cello'?.85:.57;
    input.connect(keyGate).connect(level).connect(hp).connect(bass).connect(mid).connect(treble).connect(lp);const lp2=(k==='cello'||k==='violin')?c.createBiquadFilter():null;if(lp2){lp.Q.value=.5411961;lp2.type='lowpass';lp2.Q.value=1.306563;lp.connect(lp2);}const end=lp2||lp,meter=this.makeMeter(end);end.connect(dry).connect(this.out);end.connect(wet).connect(this.convolver);
-   this.tracks[k]={input,keyGate,meter,level,bass,mid,treble,lp,lp2,wet};
+   this.tracks[k]={input,keyGate,meter,level,hp,bass,mid,treble,lp,lp2,wet};
   }
   this.padBus.connect(this.tracks.drone.input);this.pianoBus.connect(this.tracks.piano.input);this.organBus.connect(this.tracks.organ.input);
  }
@@ -61,7 +61,7 @@ class Sound{
   for(const k of Object.keys(this.tracks)){const a=this.tracks[k],v=r[k],audible=!v.mute&&(!PadMix.solo||PadMix.solo===k);
    a.level.gain.setTargetAtTime(audible?(k==='cello'?1:k==='violin'?v.level/100*.5:v.level/100):0,t,.08);
    a.bass.gain.setTargetAtTime(v.bass,t,.12);a.mid.gain.setTargetAtTime(v.lowMid,t,.12);a.treble.gain.setTargetAtTime(v.treble,t,.12);
-   a.lp.frequency.setTargetAtTime(v.cutoff,t,.15);if(a.lp2)a.lp2.frequency.setTargetAtTime(v.cutoff,t,.15);a.wet.gain.setTargetAtTime(v.space/100,t,.12);
+   a.hp.frequency.setTargetAtTime(v.highpass,t,.15);a.lp.frequency.setTargetAtTime(v.cutoff,t,.15);if(a.lp2)a.lp2.frequency.setTargetAtTime(v.cutoff,t,.15);a.wet.gain.setTargetAtTime(v.space/100,t,.12);
   }
   if(this.celloMix)this.celloMix.gain.setTargetAtTime(r.cello.level/100*.22,t,.08);
   if(this.orgCabinet)this.orgCabinet.frequency.setTargetAtTime(Math.max(3600,r.organ.cutoff),t,.12);

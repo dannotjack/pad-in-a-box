@@ -1,7 +1,7 @@
 const mixNames={drone:'Drone / pad',piano:'Piano',cello:'Cello',organ:'Organ',violin:'Violin'};
 
 function captureRecipe(){PadMix.recipe.globals={fade:opts[0].val,movement:opts[1].val,tone:opts[2].val,volume:opts[3].val,root,stage};return PadMix.clone(PadMix.recipe);}
-function recipeChanged(){if(engine)engine.applyMix();draw();PadMix.save();if(document.activeElement!==$('recipeText'))$('recipeText').value=JSON.stringify(captureRecipe(),null,2);$('recipeStatus').textContent=PadMix.storageOK?'Saved in this browser. Copy the recipe or download JSON to send it to me.':'Automatic saving is unavailable. Copy or download your recipe to keep it.';}
+function recipeChanged(){if(engine)engine.applyMix();draw();PadMix.save();if(document.activeElement!==$('recipeText'))$('recipeText').value=JSON.stringify(captureRecipe(),null,2);$('recipeStatus').textContent=PadMix.storageOK?'Saved in this browser.':'Automatic saving is unavailable. Copy or download your recipe to keep it.';}
 function slider(parent,label,value,min,max,step,unit,change,kind="dial"){
  const id='mix-'+Math.random().toString(36).slice(2);const row=document.createElement('div');const l=document.createElement('label');l.className='sliderlabel';l.htmlFor=id;l.append(document.createTextNode(label));const out=document.createElement('output');l.append(out);const input=document.createElement('input');input.type='range';input.id=id;input.min=min;input.max=max;input.step=step;input.value=value;
  let gesture=false;const begin=()=>{if(!gesture){PadMix.checkpoint();gesture=true;}};input.onpointerdown=begin;input.onkeydown=begin;input.onchange=()=>gesture=false;input.onkeyup=()=>gesture=false;
@@ -16,8 +16,11 @@ function renderMixer(){
   const meter=document.createElement('output');meter.dataset.channelMeter=key;meter.className='meter';meter.textContent='— dBFS';card.append(meter);
   const solo=card.querySelector('.solo'),mute=card.querySelector('.mute');solo.setAttribute('aria-label','Solo '+title);mute.setAttribute('aria-label','Mute '+title);solo.setAttribute('aria-pressed',String(PadMix.solo===key));mute.setAttribute('aria-pressed',String(r.mute));
   solo.onclick=()=>{PadMix.solo=PadMix.solo===key?null:key;renderMixer();recipeChanged();};mute.onclick=()=>{PadMix.checkpoint();r.mute=!r.mute;mute.setAttribute('aria-pressed',String(r.mute));recipeChanged();};
-  for(const [prop,label,min,max,step,unit]of [['level','Level',0,key==='cello'?100:150,1,'%'],['bass','Bass · 180 Hz',-12,12,.5,' dB'],['lowMid','Low mids · 210 Hz',-12,12,.5,' dB'],['treble','Presence · 2.2 kHz',-12,12,.5,' dB'],['cutoff','Brightness cutoff',120,12000,10,' Hz'],['space','Reverb send',0,60,1,'%']])slider(card,label,r[prop],min,max,step,unit,v=>r[prop]=v,prop==='level'?'fader':'dial');
-  if(key==='drone')slider(card,'Rounded → saw texture',r.edge,0,100,1,'%',v=>r.edge=v);
+  const main=document.createElement('div');main.className='channel-main';card.append(main);
+  for(const [prop,label,max] of [['level','Level',key==='cello'?100:150],['space','Reverb',60]])slider(main,label,r[prop],0,max,1,'%',v=>r[prop]=v,'range');
+  const detail=document.createElement('details');detail.className='channel-detail';detail.innerHTML='<summary>EQ & filters</summary>';const eq=document.createElement('div');eq.className='eq-controls';detail.append(eq);card.append(detail);
+  for(const [prop,label,min,max,step,unit] of [['highpass','High-pass · low cut',20,2000,1,' Hz'],['cutoff','Low-pass · high cut',120,12000,10,' Hz'],['bass','Bass · 180 Hz',-12,12,.5,' dB'],['lowMid','Low mids · 210 Hz',-12,12,.5,' dB'],['treble','Presence · 2.2 kHz',-12,12,.5,' dB']])slider(eq,label,r[prop],min,max,step,unit,v=>r[prop]=v,'range');
+  if(key==='drone')slider(eq,'Saw texture',r.edge,0,100,1,'%',v=>r.edge=v,'range');
   $('mixcards').append(card);
  }
  $('drawbars').replaceChildren();const labels=['16′ · body','8′ · fundamental','5⅓′ · fifth','4′ · octave','2⅔′ · fifth','2′ · brightness','1⅗′ · colour','1⅓′ · bite','1′ · air'];
@@ -34,7 +37,7 @@ $('recipeName').onfocus=()=>PadMix.checkpoint();
 $('recipeName').oninput=()=>{PadMix.recipe.name=$('recipeName').value;recipeChanged();};
 $('audition').onchange=()=>{PadMix.auditionAll=$('audition').value==='all';if(engine){engine.auditionAll=PadMix.auditionAll;engine.changeStage(stage);engine.nextNote=engine.ctx.currentTime+.2;engine.orgNextSwell=engine.ctx.currentTime+.2;}recipeChanged();};
 $('organLift').onclick=()=>{const r=captureRecipe();r.name='Organ lift';Object.assign(r.instruments.organ,{level:115,bass:-2,lowMid:-6,treble:4,cutoff:6500,drawbars:[.32,5.76,.5,4,2.4,4.2,2.8,2.2,1.6]});applyRecipe(r);$('recipeStatus').textContent='Organ lift applied: less low-mid weight, more upper harmonics. Undo restores your previous mix.';};
-$('originalMix').onclick=()=>{applyRecipe(PadMix.clone(PadMix.defaults));};
+$('originalMix').onclick=()=>{applyRecipe(PadMix.clone(PadMix.defaults));$('recipeStatus').textContent='Your new Default mix is loaded and saved.';};
 $('undoMix').onclick=()=>{const r=PadMix.undo();if(r)applyRecipe(r,false);};
 document.addEventListener('mixhistory',()=>{$('undoMix').disabled=!PadMix.history.length;});
 $('copyRecipe').onclick=async()=>{const text=JSON.stringify(captureRecipe(),null,2);$('recipeText').value=text;try{await navigator.clipboard.writeText(text);$('recipeStatus').textContent='Recipe copied. Paste it into our chat.';}catch(e){$('recipeText').closest('details').open=true;$('recipeText').focus();$('recipeText').select();$('recipeStatus').textContent='Select and copy the recipe below, or use Download JSON.';}};
