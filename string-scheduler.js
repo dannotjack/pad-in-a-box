@@ -1,0 +1,14 @@
+// Pure arrangement planner. Times refer to audible note envelopes, excluding reverb tails.
+export class StringSchedule{
+ constructor(phrases,stage,now,random=Math.random){this.phrases=phrases;this.stage=stage;this.origin=now;this.random=random;this.events=[];this.cooldown={};this.last={};this.nextCello=now;this.nextViolin=now+10;this.opening=stage===2;}
+ choose(instrument,t){let pool=this.phrases.filter(p=>(!instrument||p.instrument===instrument)&&(this.stage===3?p.stages!=='Moonlight':p.stages!=='Dawn'));if(this.stage===3&&instrument==='violin'){const expressive=pool.filter(p=>p.notes.some(n=>n.art==='tremolo')||p.id==='V3'||p.id==='V4'),sustained=pool.filter(p=>!p.notes.some(n=>n.art==='tremolo'));if(this.energy>=.6&&expressive.length)pool=expressive;else if(this.energy<.35&&sustained.length)pool=sustained;}const playing=new Set(this.events.filter(e=>e.end>t).map(e=>e.p.id));let eligible=pool.filter(p=>!playing.has(p.id)&&p.id!==this.last[p.instrument]&&(this.cooldown[p.id]||0)<=t);if(!eligible.length)eligible=pool.filter(p=>!playing.has(p.id));if(!eligible.length)eligible=pool;eligible.sort((a,b)=>(this.cooldown[a.id]||0)-(this.cooldown[b.id]||0));const p=eligible[Math.floor(this.random()*Math.min(2,eligible.length))];return p;}
+ add(p,at){const duration=p.notes.reduce((s,n)=>s+n.seconds,0),event={p,at,end:at+duration+p.release};this.events.push(event);this.cooldown[p.id]=event.end+p.rest;this.last[p.instrument]=p.id;return event;}
+ tick(t,capacity=5,intensity=0){this.energy=intensity;this.events=this.events.filter(e=>e.end>t);const out=[];if(this.stage===2){if(t>=this.nextCello&&this.events.length<capacity){let p=this.choose('cello',t);if(this.opening){p={...p,id:'opening',name:'Moonlight · upper root',notes:[{degree:8,seconds:6,strength:65,art:'sustain'}]};this.opening=false;}const e=this.add(p,t+.75);out.push(e);this.nextCello=e.end+Math.max(p.rest,10)+this.random()*5;}if(t>=this.nextViolin&&this.events.length<capacity){const p=this.choose('violin',t),e=this.add(p,t+.75);out.push(e);this.nextViolin=e.end+Math.max(p.rest,16)+this.random()*8;}return out;}
+ const desired=intensity<.25?2:intensity<.55?3:intensity<.85?4:5;
+ // At three or more voices, replace only after a slot is free. At two,
+ // prepare the next voice early enough for its attack to develop before an exit.
+ const future=this.events.filter(e=>e.end>t+4).length;
+ let need=Math.max(desired-this.events.length,future<2?2-future:0);
+ while(need-->0&&this.events.length<capacity){const n=this.events.length,cello=this.events.filter(e=>e.p.instrument==='cello').length;const instrument=cello===0?'cello':n===1&&cello===1?'violin':cello<2&&this.random()<.55?'cello':'violin';const p=this.choose(instrument,t),e=this.add(p,t+.75);e.lift=instrument==='violin'&&intensity>=.6;out.push(e);}return out;
+ }
+}

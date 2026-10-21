@@ -1,0 +1,62 @@
+{
+  "schema": "pad-in-a-box-mix/1",
+  "name": "Default",
+  "globals": {
+    "fade": 8,
+    "movement": 35,
+    "tone": 50,
+    "volume": 55,
+    "root": 0,
+    "stage": 3
+  },
+  "instruments": {
+    "drone": {
+      "level": 84,
+      "bass": -6,
+      "lowMid": 9.5,
+      "treble": -2,
+      "cutoff": 12000,
+      "space": 43,
+      "mute": false,
+      "edge": 0
+    },
+    "piano": {
+      "level": 100,
+      "bass": 0,
+      "lowMid": -3,
+      "treble": 9.5,
+      "cutoff": 1900,
+      "space": 58,
+      "mute": false
+    },
+    "cello": {
+      "level": 44,
+      "bass": -8,
+      "lowMid": -4,
+      "treble": 2.5,
+      "cutoff": 2530,
+      "space": 42,
+      "mute": false
+    },
+    "organ": {
+      "level": 115,
+      "bass": -2,
+      "lowMid": -6,
+      "treble": 4,
+      "cutoff": 6500,
+      "space": 27,
+      "mute": false,
+      "drawbars": [
+        7.56,
+        5.76,
+        4.35,
+        6.61,
+        7.05,
+        7.34,
+        6.4,
+        6.39,
+        6.8
+      ]
+    }
+  }
+}

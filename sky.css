@@ -1,0 +1,35 @@
+/* Stage sky: visual-only layer, independent of the original Web Audio engine. */
+.device{--sky:#658ac7;--skydeep:#192e4c;--horizon:#355c88;--stage-accent:#658ac7;transition:box-shadow 1.8s ease}
+.device[data-sky="0"]{--sky:#d96e68;--skydeep:#623f58;--horizon:#9d6566;--stage-accent:#d96e68}
+.device[data-sky="1"]{--sky:#658ac7;--skydeep:#12253d;--horizon:#294566;--stage-accent:#658ac7}
+.device[data-sky="2"]{--sky:#e5bd56;--skydeep:#25344c;--horizon:#5a6580;--stage-accent:#e5bd56}
+.device[data-sky="3"]{--sky:#78a781;--skydeep:#569aa6;--horizon:#a1bfa3;--stage-accent:#78a781}
+.display{position:relative;overflow:hidden;isolation:isolate;background:#12253d;min-height:185px}
+.display:before{content:"";position:absolute;inset:0;z-index:-2;background:transparent}
+.sky-illustration{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#12253d}.sky-canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:0}
+.sky-glow{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at 50% 90%,#ffe6ac 0%,transparent 65%);opacity:0;transition:opacity 5.2s ease}.device[data-sky="0"] .sky-glow{opacity:.17}.device[data-sky="3"] .sky-glow{opacity:.22}
+.sky-stars{position:absolute;inset:0;z-index:1;background-image:radial-gradient(circle at 12% 30%,#fff 1px,transparent 2px),radial-gradient(circle at 31% 18%,#fff 1px,transparent 2px),radial-gradient(circle at 48% 39%,#fff 1px,transparent 2px),radial-gradient(circle at 63% 12%,#fff 1px,transparent 2px),radial-gradient(circle at 81% 28%,#fff 1px,transparent 2px),radial-gradient(circle at 93% 43%,#fff 1px,transparent 2px),radial-gradient(circle at 56% 61%,#fff 1px,transparent 2px);opacity:0;transition:opacity 4s ease}
+.sky-hills{position:absolute;bottom:-1px;left:0;width:100%;height:36%;fill:#142c47;opacity:1;z-index:3;transition:fill 4.8s ease}
+.sky-sun,.sky-moon{position:absolute;border-radius:50%;left:49%;top:25%;z-index:2;will-change:transform,opacity;transition:transform 4.6s cubic-bezier(.36,0,.22,1),opacity 4.6s ease,background-color 4.6s ease}
+.sky-sun{width:82px;height:82px;background:#ffe4a1;box-shadow:0 0 40px #ffd57b7a}
+.sky-moon{width:56px;height:56px;background:#f4f0d9;box-shadow:0 0 19px #f4f0d977}
+.sky-moon:before{content:"";position:absolute;inset:11px 26px 36px 10px;border-radius:50%;background:#d9d8cc88;box-shadow:21px 21px 0 0 #d9d8cc77,32px 5px 0 -3px #d9d8cc77}
+/* The sun is anchored over the centre valley across every stage.
+   Dusk -> Midnight: it drops straight behind the hills.
+   Moonlight -> Dawn: it rises straight up from behind the hills.
+   The mountains paint ABOVE both orbs to obscure them at the horizon. */
+.device[data-orbs="0"] .sky-sun{opacity:1;transform:translate(-50%,88px)}
+.device[data-orbs="1"] .sky-sun{opacity:0;transform:translate(-50%,174px)}
+.device[data-orbs="2"] .sky-sun{opacity:0;transform:translate(-50%,174px)}
+.device[data-orbs="3"] .sky-sun{opacity:1;transform:translate(-50%,38px)}
+/* Moon traces an arc into view from behind the mountain silhouette. */
+.device[data-sky="0"] .sky-moon{opacity:0;transform:translate(96px,170px) scale(.8)}
+.device[data-sky="1"] .sky-moon{opacity:0;transform:translate(96px,170px) scale(.8)}
+.device[data-sky="2"] .sky-moon{opacity:1;transform:translate(-3px,-11px) scale(.96)}
+.device[data-sky="3"] .sky-moon{opacity:0;transform:translate(-92px,-108px) scale(.82)}
+.device[data-sky="1"] .sky-stars,.device[data-sky="2"] .sky-stars{opacity:.85}.device[data-sky="3"] .sky-stars{opacity:.18}
+.device[data-sky="0"] .sky-hills{fill:#53384a}.device[data-sky="3"] .sky-hills{fill:#387f81}
+.display .readout,.display .wave,.display .status{position:relative;z-index:1}.display .readout{min-height:93px}.display .readout h1{text-shadow:0 2px 8px #111a2988;transition:color 4.6s ease}.display .desc,.display .eyebrow,.display .root-display strong,.display .status{transition:color 4.6s ease}.display .wave{opacity:.68}.display .wave path{transition:stroke 4.6s ease,opacity 4.6s ease}
+
+@media(max-width:570px){.display{min-height:165px}.sky-sun{width:62px;height:62px}.sky-moon{width:44px;height:44px}.meta{display:none}}
+@media(prefers-reduced-motion:reduce){.sky-sun,.sky-moon,.sky-stars,.sky-glow,.display,.display:before,.display .wave path,.display .readout h1,.display .desc,.display .eyebrow,.display .root-display strong,.display .status,.sky-hills{transition-duration:.01ms!important}}

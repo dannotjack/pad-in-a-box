@@ -1,0 +1,11 @@
+/* The performance surface fills the viewport; previous/next arrows receive spare height. */
+body{display:block;padding:0;min-height:100vh;min-height:100dvh}
+.device{width:100%;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;border:0;border-radius:0;padding:clamp(10px,2vw,24px);padding-bottom:max(10px,env(safe-area-inset-bottom));box-shadow:none}
+.device>*{flex-shrink:0}
+.stepper{flex:1 0 77px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.performance-footer{position:static;flex-direction:row;flex-wrap:wrap;left:auto;right:auto;bottom:auto;margin-top:12px;padding:0;border:0;box-shadow:none;background:none}
+.performance-footer .play{flex:1;max-width:320px;width:auto;min-width:150px}
+.performance-footer .hint{display:block;flex:1;max-width:none}
+.pending:empty,.alert:empty{display:none}
+@media(max-width:700px){.performance-footer .hint{display:none}.performance-footer .play{max-width:none}.device{margin:0}.stepper{margin-top:12px}}
+@media(max-height:650px){.display{min-height:135px;padding-top:10px;padding-bottom:10px}.display .readout{min-height:70px}.top{margin-bottom:8px}.knob{max-width:64px}.step{min-height:52px}.note{min-height:44px}.stepper{flex-basis:52px}.legend{margin-top:5px}}
